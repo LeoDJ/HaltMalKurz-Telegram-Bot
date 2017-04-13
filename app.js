@@ -2,4 +2,5 @@
  * Created by Leandro on 13.04.2017.
  */
 
-console.log("initial");
+var db = require('./db/db');
+var bot = require('./bot/bot');
