@@ -31,7 +31,9 @@ module.exports = {
             kleinkuenstler: 'BQADAgADFwEAArjV7w_UmAHHSysVCAI',
             pinguin: 'BQADAgADGQEAArjV7w-ZcGk7g_ZyTQI'
         },
-        kommunismus: 'BQADAgAD-QADuNXvDybdi8lkuQZQAg'
+        kommunismus: {
+            multi: 'BQADAgAD-QADuNXvDybdi8lkuQZQAg'
+        }
     },
     nichtWitzig: {
         kapitalismus: {
@@ -51,5 +53,9 @@ module.exports = {
             pinguin: ['BQADAgADCwEAArjV7w8_OvK8YGuSKgI']
         }
     },
-    razupaltuff: 'BQADAgADDQEAArjV7w9c3w18rW2kIgI'
+    none: {
+        razupaltuff: {
+            none: 'BQADAgADDQEAArjV7w9c3w18rW2kIgI'
+        },
+    }
 };

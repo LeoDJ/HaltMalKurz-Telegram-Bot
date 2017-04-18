@@ -1,8 +1,11 @@
-const Telegraf  = require('telegraf');
+const Telegraf = require('telegraf');
 
 const config = require('../config');
 
-var bot = new Telegraf (config.bot.token);
+const comm = require('./communication');
+const game = require('../game/game');
+
+var bot = new Telegraf(config.bot.token);
 
 //get username for group command handling
 bot.telegram.getMe().then((botInfo) => {
@@ -16,6 +19,8 @@ bot.on('sticker', msg => {
 });
 
 
-bot.command('start')
+bot.command('start', comm.start);
+bot.command('new', game.newGame);
+bot.command('about', comm.about);
 
 bot.startPolling();

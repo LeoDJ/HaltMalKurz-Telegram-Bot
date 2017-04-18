@@ -3,6 +3,7 @@ module.exports = {
         token: 'yourTelegramBotTokenHere'
     },
     db: {
-        url: 'mongodb://localhost:27017/haltmalkurz' //your MongoDB connection URL here
+        url: 'mongodb://localhost:27017/haltmalkurz', //your MongoDB connection URL here
+        reconnectTimeout: 5000 //delay between connection attempts in ms
     }
 };
