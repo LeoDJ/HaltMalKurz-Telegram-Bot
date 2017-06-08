@@ -60,6 +60,7 @@ function shuffle(array) { //implement Fisher–Yates Shuffle
 function newDeck() {
     var d = generateNewDeck();
     shuffle(d);
+    return d;
     //console.log(JSON.stringify(d));
 }
 

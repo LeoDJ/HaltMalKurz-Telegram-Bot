@@ -1,5 +1,6 @@
-var Schema = mongoose.Schema;
-var userSchema = new Schema({
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const userSchema = new Schema({
     id: {
         type: Number,
         required: true
@@ -9,10 +10,11 @@ var userSchema = new Schema({
         required: true
     },
     last_name: String,
-    username: String
+    username: String,
+    language_code: String
 });
 
-var chatSchema = new Schema({
+const chatSchema = new Schema({
     id: Number,
     type: {
         type: String,
@@ -27,7 +29,7 @@ var chatSchema = new Schema({
 
 });
 
-var photoSizeSchema = new Schema ({
+const photoSizeSchema = new Schema({
     file_id: {
         type: String,
         required: true
@@ -43,7 +45,7 @@ var photoSizeSchema = new Schema ({
     file_size: Number
 });
 
-var stickerSchema = new Schema({
+const stickerSchema = new Schema({
     file_id: {
         type: String,
         required: true
@@ -61,7 +63,7 @@ var stickerSchema = new Schema({
     file_size: Number
 });
 
-var messageSchema = new Schema({
+const messageSchema = new Schema({
     message_id: {
         type: Number,
         required: true
@@ -81,7 +83,6 @@ var messageSchema = new Schema({
     forward_from_chat: chatSchema,
     forward_from_message_id: Number, //For forwareded channel posts (identifier of original message)
     forward_date: Date,
-    reply_to_message: messageSchema, //maximum nesting depth of 1
     edit_date: Date,
     entities: Schema.Types.Mixed,
     audio: Schema.Types.Mixed,
@@ -104,14 +105,24 @@ var messageSchema = new Schema({
     supergroup_chat_created: Boolean,
     channel_chat_created: Boolean,
     migrate_to_chat_id: Number,
-    migrate_from_chat_id: Number,
+    migrate_from_chat_id: Number
+});
+//need to add here due to recursion
+messageSchema.add({
+    reply_to_message: messageSchema, //maximum nesting depth of 1
     pinned_message: messageSchema
 });
 
+const User = mongoose.model('User', userSchema);
+const Chat = mongoose.model('Chat', chatSchema);
+const Message = mongoose.model('Message', messageSchema);
+const Sticker = mongoose.model('Sticker', stickerSchema);
+const PhotoSize = mongoose.model('PhotoSize', photoSizeSchema);
 
 module.exports = {
-    userSchema,
-    chatSchema,
-    messageSchema,
-    stickerSchema,
-    photoSizeSchema};
+    User,
+    Chat,
+    Message,
+    Sticker,
+    PhotoSize
+};
