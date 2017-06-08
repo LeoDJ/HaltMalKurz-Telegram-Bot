@@ -31,6 +31,6 @@
   "homepage": "https://github.com/LeoDJ/HaltMalKurz-Telegram-Bot#readme",
   "dependencies": {
     "mongoose": "^4.9.4",
-    "telegraf": "^3.6.7"
+    "telegraf": "^3.7.3"
   }
 }

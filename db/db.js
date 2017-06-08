@@ -118,8 +118,72 @@ async function getUsersInLobby(chatId) {
     });
 }
 
-function getGameState(chatId) {
+async function getGameState(chatId) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                resolve(game.game.state);
+            }
+            else if(games.length === 0) {
+                resolve("noGameRunning");
+            }
+            else {
+                reject('Multiple games with same ID');
+            }
+        });
+    });
+}
 
+async function setGameState(chatId, state) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                game.game.state = state;
+                game.save();
+                resolve(true);
+            }
+            else {
+                reject('Multiple games with same ID / No game with ID');
+            }
+        });
+    });
+}
+
+async function setCards(chatId, cards) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                game.game.cards = {};
+                game.game.cards = cards;
+                game.save();
+                resolve(true);
+            }
+            else {
+                reject('Multiple games with same ID / No game with ID');
+            }
+        });
+    });
+}
+
+async function getCards(chatId) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                resolve(game.game.cards);
+            }
+            else {
+                reject('Multiple games with same ID / No game with ID');
+            }
+        });
+    });
 }
 
 module.exports = {
@@ -128,5 +192,9 @@ module.exports = {
     getUser,
     initializeGame,
     addUserToLobby,
-    getUsersInLobby
+    getUsersInLobby,
+    getGameState,
+    setGameState,
+    setCards,
+    getCards
 };

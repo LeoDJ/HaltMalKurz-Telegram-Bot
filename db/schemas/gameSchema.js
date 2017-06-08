@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const stackSchema = require('./cardSchemas').stackSchema;
 const gameSchema = new mongoose.Schema({
     chat_id: {
         type: Number,
@@ -14,7 +15,8 @@ const gameSchema = new mongoose.Schema({
             type: String
             //enum: //TODO require enum from game logic
         },
-        data: mongoose.Schema.Types.Mixed
+        data: mongoose.Schema.Types.Mixed,
+        cards: stackSchema
     }
 });
 

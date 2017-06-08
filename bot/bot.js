@@ -43,10 +43,32 @@ bot.action('join', async(ctx, next) => {
     next();
 });
 
-bot.command('start', comm.start);
+bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
+    console.log(inlineQuery);
+    const offset = parseInt(inlineQuery.offset) || 0
+    /*const tracks = await spotifySearch(inlineQuery.query, offset, 30)
+    const results = tracks.map((track) => ({
+        type: 'audio',
+        id: track.id,
+        title: track.name,
+        audio_url: track.preview_url
+    }))
+    return answerInlineQuery(results, {next_offset: offset + 30})*/
+})
 
+bot.command('start', async (ctx)=>{
+    let state = await game.getGameState(ctx.chat.id);
+    if(state == 'noGameRunning')
+        comm.start(ctx);
+    else if (state == 'lobbyOpen')
+        game.start(ctx.chat.id);
+});
 
 bot.command('about', comm.about);
+
+bot.command('debug', async (ctx)=> {
+    ctx.reply(await db.getGameState(ctx.chat.id) + "\n" + JSON.stringify(await game.getJoinedUsers(ctx.chat.id)));
+});
 
 bot.startPolling();
 

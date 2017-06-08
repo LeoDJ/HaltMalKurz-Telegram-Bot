@@ -1,6 +1,7 @@
 /**
  * Created by Leandro on 18.04.2017.
  */
+const db = require('../db/db');
 
 var deckContent = [
     {category: 'witzig', name: 'haltMalKurz', colors: 'all', quantity: 6},
@@ -57,11 +58,10 @@ function shuffle(array) { //implement Fisher–Yates Shuffle
     return array;
 }
 
-function newDeck() {
+function newDeck(chatId) {
     var d = generateNewDeck();
     shuffle(d);
-    return d;
-    //console.log(JSON.stringify(d));
+    db.setCards(chatId, d);
 }
 
 module.exports = {

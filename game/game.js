@@ -11,13 +11,17 @@ function joinLobby(chatId, userId) {
     return db.addUserToLobby(chatId, userId);
 }
 
-function getJoinedUsers(chatId) {
+function start(chatId) {
+    db.setGameState(chatId, "gameStarted");
+    deck.newDeck(chatId);
+}
+
+async function getJoinedUsers(chatId) {
     return new Promise((resolve, reject) => {
         db.getUsersInLobby(chatId).then(userIds => {
             let promises = [];
             userIds.forEach((id) => {
                 promises.push(db.getUser(id));
-                //names.push(db.getUser(id).first_name);
             });
             let names = [];
             Promise.all(promises).then(results => {
@@ -26,14 +30,18 @@ function getJoinedUsers(chatId) {
                 });
                 resolve(names);
             });
-
         });
     });
+}
 
+function getGameState(chatId) {
+    return db.getGameState(chatId);
 }
 
 module.exports = {
     newGame,
     joinLobby,
-    getJoinedUsers
+    getJoinedUsers,
+    getGameState,
+    start
 }

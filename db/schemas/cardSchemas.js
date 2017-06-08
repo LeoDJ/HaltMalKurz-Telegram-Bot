@@ -44,6 +44,7 @@ const Card = mongoose.model('Card', cardSchema);
 const Stack = mongoose.model('Stack', stackSchema);
 
 module.exports = {
+    stackSchema,
     Card,
     Stack
 };
