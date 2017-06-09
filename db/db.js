@@ -54,41 +54,40 @@ async function getUser(userId) {
 
 async function initializeGame(chatId) {
     return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, function (err, games) {
+        Game.find({chat_id: chatId}, async function (err, games) {
             if (err) throw err;
             var game;
             if (games.length === 1) {
                 game = games[0];
                 game.game.state = 'lobbyOpen';
-                game.game.data = {joined: []}
+                game.game.data = {participants: []}
             }
             else if (games.length === 0) {
                 game = new Game({
                     chat_id: chatId,
-                    game: {state: 'lobbyOpen', data: {joined: []}}
+                    game: {state: 'lobbyOpen', data: {participants: []}}
                 });
             }
             else {
                 reject('Multiple games with same ID');
             }
-            game.save();
+            await game.save();
             resolve(chatId);
-            // object of all the users
         });
     });
 }
 
 async function addUserToLobby(chatId, userId) {
     return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, function (err, games) {
+        Game.find({chat_id: chatId}, async function (err, games) {
             if (err) throw err;
             let game;
             if (games.length === 1) {
                 game = games[0];
-                if (game.game.data.joined.indexOf(userId) < 0) { //if user is not yet in array
-                    game.game.data.joined.push(userId);
-                    game.markModified('game.data.joined');
-                    game.save();
+                if (game.game.data.participants.indexOf(userId) < 0) { //if user is not yet in array
+                    game.game.data.participants.push(userId);
+                    game.markModified('game.data.participants');
+                    await game.save();
                     resolve(true);
                 }
                 else {
@@ -109,7 +108,7 @@ async function getUsersInLobby(chatId) {
             if (err) throw err;
             if (games.length === 1) {
                 game = games[0];
-                resolve(game.game.data.joined);
+                resolve(game.game.data.participants);
             }
             else {
                 reject('Multiple games with same ID');
@@ -138,12 +137,12 @@ async function getGameState(chatId) {
 
 async function setGameState(chatId, state) {
     return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, function (err, games) {
+        Game.find({chat_id: chatId}, async function (err, games) {
             if (err) throw err;
             if (games.length === 1) {
                 game = games[0];
                 game.game.state = state;
-                game.save();
+                await game.save();
                 resolve(true);
             }
             else {
@@ -155,13 +154,14 @@ async function setGameState(chatId, state) {
 
 async function setCards(chatId, cards) {
     return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, function (err, games) {
+        Game.find({chat_id: chatId}, async function (err, games) {
             if (err) throw err;
             if (games.length === 1) {
                 game = games[0];
-                game.game.cards = {};
                 game.game.cards = cards;
-                game.save();
+                //game.markModified('game.cards');
+                //console.log(game.game.cards.drawPile.length);
+                await game.save();
                 resolve(true);
             }
             else {
@@ -186,6 +186,21 @@ async function getCards(chatId) {
     });
 }
 
+async function getChatIdForUser(userId) {
+    return new Promise((resolve, reject) => {
+        Game.find({'game.data.participants': userId}, function (err, games) {
+            if (err) throw err;
+            if (games.length > 0) {
+                game = games[0];
+                resolve(game.chat_id);
+            }
+            else {
+                reject('No game with ID');
+            }
+        });
+    });
+}
+
 module.exports = {
     start,
     saveUser,
@@ -196,5 +211,6 @@ module.exports = {
     getGameState,
     setGameState,
     setCards,
-    getCards
+    getCards,
+    getChatIdForUser
 };

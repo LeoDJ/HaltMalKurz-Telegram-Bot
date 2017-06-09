@@ -7,7 +7,7 @@ const cardSchema = new Schema({
     },
     category: {
         type: String,
-        enum: ['witzig', 'nichtWitzig', 'razupaltuff'],
+        enum: ['witzig', 'nichtWitzig', 'none'],
         required: true
     },
     name: {
@@ -22,7 +22,8 @@ const cardSchema = new Schema({
             'kommunismus',
             'kapitalismus',
             'nazi',
-            'polizei'
+            'polizei',
+            'razupaltuff'
         ]
     },
     color: {
