@@ -102,21 +102,6 @@ async function addUserToLobby(chatId, userId) {
     });
 }
 
-async function getUsersInLobby(chatId) {
-    return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, function (err, games) {
-            if (err) throw err;
-            if (games.length === 1) {
-                game = games[0];
-                resolve(game.game.data.participants);
-            }
-            else {
-                reject('Multiple games with same ID');
-            }
-        });
-    });
-}
-
 async function getChatIdForUser(userId) {
     return new Promise((resolve, reject) => {
         Game.find({'game.data.participants': userId}, function (err, games) {
@@ -248,6 +233,40 @@ async function setCards(chatId, cards) {
     return getGameData(chatId, 'game.state');
 }*/
 
+async function getUsersInLobby(chatId) {
+    return getGameData(chatId, 'game.data.participants');
+}
+/*
+async function getUsersInLobby(chatId) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                resolve(game.game.data.participants);
+            }
+            else {
+                reject('Multiple games with same ID');
+            }
+        });
+    });
+}*/
+
+async function getGameState(chatId) {
+    return new Promise((resolve, reject) => {
+        getGameData(chatId, 'game.state')
+            .then((result) => {
+                resolve(result);
+            })
+            .catch((res) => {
+                if(res === 'No game with ID')
+                    resolve('noGameRunning');
+                else
+                    reject(res);
+            });
+    });
+}
+/*
 async function getGameState(chatId) {
     return new Promise((resolve, reject) => {
         Game.find({chat_id: chatId}, function (err, games) {
@@ -265,8 +284,11 @@ async function getGameState(chatId) {
         });
     });
 }
-
-
+*/
+async function setGameState(chatId, state) {
+    return setGameData(chatId, 'game.state', state);
+}
+/*
 async function setGameState(chatId, state) {
     return new Promise((resolve, reject) => {
         Game.find({chat_id: chatId}, async function (err, games) {
@@ -282,7 +304,7 @@ async function setGameState(chatId, state) {
             }
         });
     });
-}
+}*/
 
 module.exports = {
     start,
