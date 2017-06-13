@@ -5,17 +5,21 @@ const db = require('../db/db');
 const config = require('../config');
 
 const emoji = {
-    rock: '✊️',
-    paper: '✋️',
+    rock:     '✊️',
+    paper:    '✋️',
     scissors: '✌️',
-    well: '⛲️'
+    well:     '⛲️',
+    lizard:   '🦎',
+    spock:    '🖖'
 };
 
 const beats = {
-    rock: ['scissors'],
-    paper: ['rock', 'well'],
-    scissors: ['paper'],
-    well: ['rock', 'scissors']
+    rock:       ['scissors', 'lizard'            ],
+    paper:      ['rock',     'well',     'spock' ],
+    scissors:   ['paper',    'lizard'            ],
+    well:       ['rock',     'scissors', 'lizard'],
+    lizard:     ['spock',    'paper'             ],
+    spock:      ['scissors', 'stone'             ]
 };
 
 
