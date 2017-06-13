@@ -1,4 +1,5 @@
 const {Extra, Markup} = require('telegraf');
+const schnick = require('../game/schnickSchnackSchnuck');
 
 const startMsg = `Willkommen beim Halt Mal Kurz Bot. 
 Benutze /new um ein neues Spiel zu starten.`;
@@ -12,16 +13,16 @@ const inlineKeyboardJoin = Extra.HTML().markup(m =>
     ]));
 
 const inlineKeyboardSchnick = Markup.inlineKeyboard([
-    Markup.callbackButton('✌️', 'schnick_scissors'),
-    Markup.callbackButton('✊️', 'schnick_rock'),
-    Markup.callbackButton('✋️', 'schnick_paper'),
-    Markup.callbackButton('⛲️', 'schnick_well')
+    Markup.callbackButton(schnick.emoji.scissors, 'schnick_scissors'),
+    Markup.callbackButton(schnick.emoji.rock, 'schnick_rock'),
+    Markup.callbackButton(schnick.emoji.paper, 'schnick_paper'),
+    Markup.callbackButton(schnick.emoji.well, 'schnick_well')
 ]);
 
 const inlineKeyboardSchnickWithoutWell = Markup.inlineKeyboard([
-    Markup.callbackButton('✌️', 'schnick_scissors'),
-    Markup.callbackButton('✊️', 'schnick_rock'),
-    Markup.callbackButton('✋️', 'schnick_paper')
+    Markup.callbackButton(schnick.emoji.scissors, 'schnick_scissors'),
+    Markup.callbackButton(schnick.emoji.rock, 'schnick_rock'),
+    Markup.callbackButton(schnick.emoji.paper, 'schnick_paper')
 ]);
 
 function start(ctx) {

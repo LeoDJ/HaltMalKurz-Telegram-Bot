@@ -5,5 +5,8 @@ module.exports = {
     db: {
         url: 'mongodb://localhost:27017/haltmalkurz', //your MongoDB connection URL here
         reconnectTimeout: 5000 //delay between connection attempts in ms
-    }
+    },
+    game: {
+            schnickSchnackSchnuckTimeout: 8000 //delay before schnick schnack schnuck game is endede in ms
+        }
 };

@@ -123,7 +123,7 @@ bot.command('id', async(ctx) => {
 
 bot.command('schnick', async(ctx) => {
     await schnick.start(ctx);
-    let msg = await ctx.reply("Schnick Schnack Schnuck!", comm.inlineKeyboardSchnick.extra());
+    let msg = await ctx.reply("Schnick Schnack Schnuck!\n8s bis zur Auswertung.", comm.inlineKeyboardSchnick.extra());
     schnick.setSchnickMessage(msg);
 });
 
@@ -137,6 +137,7 @@ bot.command('ohneBrunnen', async(ctx) => {
 bot.action(/schnick_(.+)/, async(ctx) => {
     console.log(ctx.match[1]);
     console.log(ctx.from);
+    schnick.select(ctx, ctx.match[1]);
 });
 
 bot.startPolling();
