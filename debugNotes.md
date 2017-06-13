@@ -1,3 +1,11 @@
+# german names
+variable abbreviation | full german phrase | english meaning
+---|---|---
+   | Halt mal kurz |  (freely) "hold on to this for a second"<br>A game created by the german comedian Marc-Uwe Kling
+schnick | "Schnick Schnack Schnuck" | rock paper scissors
+ohneBrunnen | ohne Brunnen | without well (inside joke while playing rock paper scissors)
+
+
 # gameStates
 ```
 noGameRunning

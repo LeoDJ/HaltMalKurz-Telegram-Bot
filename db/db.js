@@ -306,6 +306,14 @@ async function setGameState(chatId, state) {
     });
 }*/
 
+async function getSchnickData(chatId, key) {
+    return getGameData(chatId, 'game.data.schnick.' + key);
+}
+
+async function setSchnickData(chatId, key, value) {
+    return setGameData(chatId, 'game.data.schnick.' + key, value);
+}
+
 module.exports = {
     start,
     saveUser,
@@ -318,6 +326,6 @@ module.exports = {
     setCards,
     getCards,
     getChatIdForUser,
-    setData,
-    getData
+    getSchnickData,
+    setSchnickData
 };
