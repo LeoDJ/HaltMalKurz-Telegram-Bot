@@ -117,6 +117,137 @@ async function getUsersInLobby(chatId) {
     });
 }
 
+async function getChatIdForUser(userId) {
+    return new Promise((resolve, reject) => {
+        Game.find({'game.data.participants': userId}, function (err, games) {
+            if (err) throw err;
+            if (games.length > 0) {
+                game = games[0];
+                resolve(game.chat_id);
+            }
+            else {
+                reject('No game with ID');
+            }
+        });
+    });
+}
+
+function setKey(data, key, value) {
+    let keys;
+    if (typeof key === 'string')
+        keys = key.split('.');
+    else
+        keys = key;
+    if (keys.length === 1) {
+        data[keys[0]] = value;
+        return;
+    }
+    setKey(data[keys[0]], keys.slice(1), value);
+}
+
+function getKey(data, key) {
+    let keys;
+    if (typeof key === 'string')
+        keys = key.split('.');
+    else
+        keys = key;
+    if (keys.length === 1) {
+        return data[keys[0]];
+    }
+    return getKey(data[keys[0]], keys.slice(1));
+}
+
+async function setGameData(chatId, key, value) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, async function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                setKey(game, key, value);
+                //game.game.data[key] = value;
+                game.markModified(key);
+                await game.save();
+                resolve(true);
+            }
+            else if (games.length === 0) {
+                reject('No game with ID');
+            }
+            else
+                reject('Multiple games with same ID');
+        });
+    });
+}
+
+
+async function getGameData(chatId, key) {
+    return new Promise((resolve, reject) => {
+        Game.find({chat_id: chatId}, async function (err, games) {
+            if (err) throw err;
+            if (games.length === 1) {
+                game = games[0];
+                //let data = game.game.data[key];
+                resolve(getKey(game, key));
+            }
+            else if (games.length === 0) {
+                reject('No game with ID');
+            }
+            else
+                reject('Multiple games with same ID');
+        });
+    });
+}
+
+async function setData(chatId, key, value) {
+    return setGameData(chatId, 'game.data.' + key, value);
+}
+
+async function getData(chatId, key) {
+    return getGameData(chatId, 'game.data.' + key);
+}
+async function getCards(chatId) {
+    return getGameData(chatId, 'game.cards');
+}
+/*async function getCards(chatId) {
+ return new Promise((resolve, reject) => {
+ Game.find({chat_id: chatId}, function (err, games) {
+ if (err) throw err;
+ if (games.length === 1) {
+ game = games[0];
+ resolve(game.game.cards);
+ }
+ else {
+ reject('Multiple games with same ID / No game with ID');
+ }
+ });
+ });
+ }*/
+
+async function setCards(chatId, cards) {
+    return setGameData(chatId, 'game.cards', cards);
+}
+/*async function setCards(chatId, cards) {
+ return new Promise((resolve, reject) => {
+ Game.find({chat_id: chatId}, async function (err, games) {
+ if (err) throw err;
+ if (games.length === 1) {
+ game = games[0];
+ game.game.cards = cards;
+ //game.markModified('game.cards');
+ //console.log(game.game.cards.drawPile.length);
+ await game.save();
+ resolve(true);
+ }
+ else {
+ reject('Multiple games with same ID / No game with ID');
+ }
+ });
+ });
+ }*/
+
+/*async function getGameState(chatId) {
+    return getGameData(chatId, 'game.state');
+}*/
+
 async function getGameState(chatId) {
     return new Promise((resolve, reject) => {
         Game.find({chat_id: chatId}, function (err, games) {
@@ -125,7 +256,7 @@ async function getGameState(chatId) {
                 game = games[0];
                 resolve(game.game.state);
             }
-            else if(games.length === 0) {
+            else if (games.length === 0) {
                 resolve("noGameRunning");
             }
             else {
@@ -134,6 +265,7 @@ async function getGameState(chatId) {
         });
     });
 }
+
 
 async function setGameState(chatId, state) {
     return new Promise((resolve, reject) => {
@@ -152,55 +284,6 @@ async function setGameState(chatId, state) {
     });
 }
 
-async function setCards(chatId, cards) {
-    return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, async function (err, games) {
-            if (err) throw err;
-            if (games.length === 1) {
-                game = games[0];
-                game.game.cards = cards;
-                //game.markModified('game.cards');
-                //console.log(game.game.cards.drawPile.length);
-                await game.save();
-                resolve(true);
-            }
-            else {
-                reject('Multiple games with same ID / No game with ID');
-            }
-        });
-    });
-}
-
-async function getCards(chatId) {
-    return new Promise((resolve, reject) => {
-        Game.find({chat_id: chatId}, function (err, games) {
-            if (err) throw err;
-            if (games.length === 1) {
-                game = games[0];
-                resolve(game.game.cards);
-            }
-            else {
-                reject('Multiple games with same ID / No game with ID');
-            }
-        });
-    });
-}
-
-async function getChatIdForUser(userId) {
-    return new Promise((resolve, reject) => {
-        Game.find({'game.data.participants': userId}, function (err, games) {
-            if (err) throw err;
-            if (games.length > 0) {
-                game = games[0];
-                resolve(game.chat_id);
-            }
-            else {
-                reject('No game with ID');
-            }
-        });
-    });
-}
-
 module.exports = {
     start,
     saveUser,
@@ -212,5 +295,7 @@ module.exports = {
     setGameState,
     setCards,
     getCards,
-    getChatIdForUser
+    getChatIdForUser,
+    setData,
+    getData
 };

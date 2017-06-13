@@ -5,14 +5,11 @@ const config = require('../config');
 
 const comm = require('./communication');
 const game = require('../game/game');
+const schnick = require('../game/schnickSchnackSchnuck');
 const db = require('../db/db');
 
 const bot = new Telegraf(config.bot.token);
 
-const inlineKeyboardJoin = Extra.HTML().markup(m =>
-    m.inlineKeyboard([
-        m.callbackButton('Beitreten', 'join')
-    ]));
 
 //get username for group command handling
 bot.telegram.getMe().then((botInfo) => {
@@ -31,7 +28,7 @@ bot.command('new', async(ctx) => {
     await game.newGame(ctx.chat.id);
     await game.joinLobby(ctx.chat.id, ctx.from.id);
     let names = await game.getJoinedUsers(ctx.chat.id);
-    ctx.reply(comm.newMsg + names.join(', '), inlineKeyboardJoin);
+    ctx.reply(comm.newMsg + names.join(', '), comm.inlineKeyboardJoin);
 
 });
 bot.action('join', async(ctx, next) => {
@@ -41,7 +38,15 @@ bot.action('join', async(ctx, next) => {
     let names = await game.getJoinedUsers(ctx.chat.id);
     console.log(success, names);
     if (success) //only edit message, when user not added already
-        editMessage(ctx, comm.newMsg + names.join(', '), inlineKeyboardJoin);
+        editMessage(ctx, ctx.update.callback_query.message, comm.newMsg + names.join(', '), comm.inlineKeyboardJoin);
+    ctx.answerCallbackQuery();
+    next();
+});
+
+bot.action('hit', async(ctx, next) => {
+    //ctx.telegram.sendMessage(ctx.chat.id, "aua!");
+    let chatId = await db.getChatIdForUser(ctx.update.callback_query.from.id);
+    ctx.telegram.sendMessage(chatId, "aua!");
     ctx.answerCallbackQuery();
     next();
 });
@@ -81,21 +86,21 @@ bot.on('inline_query', async({inlineQuery, answerInlineQuery}) => {
         type: 'article',
         id: "2",
         title: 'Test2',
-        reply_markup: inlineKeyboardJoin,
+        reply_markup: comm.inlineKeyboardJoin,
         input_message_content: {message_text: 'keyboard?'}
     });
     answerInlineQuery(results, {cache_time: 0}).catch((err) => {
         console.log(err);
     });
 
-/*const tracks = await spotifySearch(inlineQuery.query, offset, 30)
- const results = tracks.map((track) => ({
- type: 'audio',
- id: track.id,
- title: track.name,
- audio_url: track.preview_url
- }))
- return answerInlineQuery(results, {next_offset: offset + 30})*/
+    /*const tracks = await spotifySearch(inlineQuery.query, offset, 30)
+     const results = tracks.map((track) => ({
+     type: 'audio',
+     id: track.id,
+     title: track.name,
+     audio_url: track.preview_url
+     }))
+     return answerInlineQuery(results, {next_offset: offset + 30})*/
 });
 
 bot.command('start', async(ctx) => {
@@ -114,11 +119,29 @@ bot.command('debug', async(ctx) => {
 
 bot.command('id', async(ctx) => {
     ctx.reply("from: " + ctx.from.id + "   storedChat: " + await db.getChatIdForUser(ctx.from.id));
-})
+});
+
+bot.command('schnick', async(ctx) => {
+    await schnick.start(ctx);
+    let msg = await ctx.reply("Schnick Schnack Schnuck!", comm.inlineKeyboardSchnick.extra());
+    schnick.setSchnickMessage(msg);
+});
+
+bot.command('ohneBrunnen', async(ctx) => {
+    let modified = await schnick.ohneBrunnen(ctx);
+    let msg = await schnick.getSchnickMessage(ctx);
+    if (msg && modified)
+        editMessage(ctx, msg, "Schnick Schnack Schnuck!", comm.inlineKeyboardSchnickWithoutWell.extra())
+});
+
+bot.action(/schnick_(.+)/, async(ctx) => {
+    console.log(ctx.match[1]);
+    console.log(ctx.from);
+});
 
 bot.startPolling();
 
-function editMessage(ctx, text, extra) {
-    let msg = ctx.update.callback_query.message;
+function editMessage(ctx, msg, text, extra) {
+    //let msg = ctxUpdate.callback_query.message;
     ctx.telegram.editMessageText(msg.chat.id, msg.message_id, null, text, extra);
 }

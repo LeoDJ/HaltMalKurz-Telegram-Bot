@@ -74,11 +74,20 @@ async function newDeck(chatId) {
     var d = generateNewDeck();
     shuffle(d);
     await db.setCards(chatId, {drawPile: d});
-    console.log("new deck generated and saved");
+    //console.log("new deck generated and saved");
     //console.log(await db.getCards(chatId));
+}
+
+async function deal(chatId, numberParticipants){
+    let cards = await db.getCards(chatId)
+    console.log();
+    for(let i = 0; i < numberParticipants; i++) {
+
+    }
 }
 
 module.exports = {
     newDeck,
-    shuffle
+    shuffle,
+    deal
 };

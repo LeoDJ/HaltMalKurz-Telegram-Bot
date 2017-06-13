@@ -3,17 +3,20 @@ const deck = require('./deckManagement');
 
 //deck.newDeck();
 
-function newGame(chatId) {
-    return db.initializeGame(chatId);
+async function newGame(chatId) {
+    console.log("New game in chat", chatId);
+    return await db.initializeGame(chatId);
 }
 
 function joinLobby(chatId, userId) {
+    console.log("User", userId, "joined game", chatId);
     return db.addUserToLobby(chatId, userId);
 }
 
-function start(chatId) {
+async function start(chatId) {
     db.setGameState(chatId, "gameStarted");
-    deck.newDeck(chatId);
+    await deck.newDeck(chatId);
+    deck.deal(chatId);
 }
 
 async function getJoinedUsers(chatId) {
@@ -44,4 +47,4 @@ module.exports = {
     getJoinedUsers,
     getGameState,
     start
-}
+};
